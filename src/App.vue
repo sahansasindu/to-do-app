@@ -1,15 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { db } from "../src/firebase.js"; // import db
+import { db } from "../src/firebase.js";
 import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-// Firestore collection reference
+
 const tasksCollection = collection(db, "tasks");
 
 const tasks = ref([]);
 const newTask = ref("");
 
-// Load tasks from Firestore when app starts
+// Load
 const loadTasks = async () => {
   const snapshot = await getDocs(tasksCollection);
   tasks.value = snapshot.docs.map(doc => ({
@@ -18,7 +18,7 @@ const loadTasks = async () => {
   }));
 };
 
-// Add task to Firestore
+// Add
 const addTask = async () => {
   if (newTask.value.trim() !== "") {
     const docRef = await addDoc(tasksCollection, {
@@ -29,13 +29,16 @@ const addTask = async () => {
   }
 };
 
-// Delete task from Firestore
+// Delete
 const deleteTask = async (id) => {
-  await deleteDoc(doc(db, "tasks", id));
-  tasks.value = tasks.value.filter(task => task.id !== id);
+  const confirmDelete = confirm("Are you sure you want to delete this task?");
+  if (confirmDelete) {
+    await deleteDoc(doc(db, "tasks", id));
+    tasks.value = tasks.value.filter(task => task.id !== id);
+  }
 };
 
-// Load tasks on mount
+// Load
 onMounted(() => {
   loadTasks();
 });
@@ -59,6 +62,8 @@ onMounted(() => {
     </ul>
   </div>
 </template>
+
+
 
 <style scoped>
 div {
@@ -85,13 +90,39 @@ input[type="text"] {
 
 button { padding: 8px 12px; border: none; border-radius: 6px; background-color: #4caf50; color: white; cursor: pointer; }
 
-button:hover { background-color: #45a049; }
-h1{ padding-bottom: 20px; }
-ul { list-style-type: none; padding: 0; }
-li { background: white; margin-bottom: 8px; padding: 8px 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
-li span { font-size: 14px; }
-li button { background-color: #f44336; padding: 4px 8px; }
-li button:hover { background-color: #d32f2f; }
+button:hover {
+  background-color: #45a049;
+}
 
+h1{
+  padding-bottom: 20px;
+}
+
+ul {
+  list-style-type: none; padding: 0;
+}
+
+li {
+  background: white;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  display: flex; justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eee;
+}
+
+li span {
+  font-size: 14px;
+}
+
+li button {
+  background-color: #f44336;
+  padding: 4px 8px;
+}
+
+li button:hover {
+  background-color: #d32f2f;
+}
 
 </style>
